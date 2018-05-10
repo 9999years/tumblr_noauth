@@ -2,7 +2,7 @@ from urllib.parse import urljoin, urlparse
 
 # 3rd party
 import requests
-from beautifulsoup4 import BeautifulSoup
+from bs4 import BeautifulSoup
 
 class TumblrSession(requests.Session):
     _prefix = 'https://www.tumblr.com/'
@@ -11,6 +11,7 @@ class TumblrSession(requests.Session):
         """
         email and password are used to login
         """
+        super().__init__()
         self.usable = False
         login = self._login(email, password)
         if login.ok:
@@ -121,10 +122,10 @@ class TumblrSession(requests.Session):
         """
         resolves a possibl-relative-to-tumblr.com to an absolute url
         """
-        if _is_absolute(url):
+        if self._is_absolute(url):
             return url
         else:
-            return urljoin(self.prefix, act)
+            return urljoin(self._prefix, url)
 
     # https://stackoverflow.com/a/8357518/5719760
     def _is_absolute(self, url):

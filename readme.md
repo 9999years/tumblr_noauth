@@ -13,8 +13,9 @@ mostly for **dashboard-like functions**; there’s a lot left out, such as
 
 With no official way to access that data, `tumblr_noauth` provides a workaround:
 emulate a whole Tumblr “session”; you feed it a username and password (which
-**aren’t stored, even in the `TumblrSession` object,** and it performs a login
-request (and a logout request with `__exit__`).
+**aren’t stored, even in the `TumblrSession` object**) and it performs a login
+request (and a logout request with `__exit__` or at the end of the `with`
+clause).
 
 Under the hood, a `TumblrSession` is a [`requests.Session`][session] with some
 special behavior optimized for use with Python’s [`with` statements][with].
@@ -48,6 +49,18 @@ Example usage:
         print(resp, ';', resp.text)
 
 Where the `with` clause automatically logs in and out of Tumblr.
+
+For additional “authenticity”, you might want to set your headers to something
+like...
+
+    # this is lying
+    headers = {
+        'Host': 'www.tumblr.com',
+        'Origin': 'https://www.tumblr.com',
+        'Referer': 'https://www.tumblr.com/dashboard',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest',
+    }
 
 [requests]: http://docs.python-requests.org/en/master/
 [session]: http://docs.python-requests.org/en/master/api/#request-sessions
